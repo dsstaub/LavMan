@@ -19,25 +19,28 @@
       background: #1a1a1a;
       border-bottom: 1px solid #333;
       padding: 10px;
-      overflow-x: auto;
-      white-space: nowrap;
     }
     .hour-block h2 {
-      margin-top: 0;
-      font-size: 18px;
+      margin: 0 0 8px 0;
+      font-size: 22px;
       color: #ccc;
-      margin-bottom: 8px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .sortable-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .flight-card {
-      display: inline-block;
-      vertical-align: top;
       width: 280px;
       border-radius: 8px;
       padding: 8px 12px;
-      margin-right: 10px;
       border-left: 10px solid;
-      font-size: 24px;
-      line-height: 1.2em;
+      font-size: 32px;
+      line-height: 1.3em;
+      display: flex;
+      flex-direction: column;
     }
     .flight-info {
       display: flex;
@@ -68,8 +71,8 @@
       background: #000;
       color: #fff;
       border: 1px solid #444;
-      font-size: 24px;
-      width: 70px;
+      font-size: 32px;
+      width: 100px;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -90,11 +93,24 @@
       grid.innerHTML = "";
       hours.forEach(hour => {
         const block = document.createElement("div");
-        block.id = `hour-${hour}`;
         block.className = "hour-block";
-        block.innerHTML = `<h2>${hour}:00</h2>`;
+
+        const title = document.createElement("h2");
+        title.textContent = `${hour}:00`;
+
+        const dropZone = document.createElement("div");
+        dropZone.id = `hour-${hour}`;
+        dropZone.className = "sortable-wrapper";
+
+        block.appendChild(title);
+        block.appendChild(dropZone);
         grid.appendChild(block);
-        new Sortable(block, { group: 'shared', animation: 150, direction: 'horizontal' });
+
+        new Sortable(dropZone, {
+          group: 'shared',
+          animation: 150,
+          direction: 'horizontal',
+        });
       });
     }
 
@@ -170,11 +186,13 @@
               </div>
             `;
 
+            const infoRow = card.querySelector(".flight-info");
+            infoRow.appendChild(gateSpan);
+
             const meta = card.querySelector(".flight-meta");
             const editBox = document.createElement("div");
             editBox.style.display = "flex";
             editBox.style.gap = "10px";
-            editBox.appendChild(gateSpan);
             editBox.appendChild(tailSpan);
             meta.appendChild(editBox);
 
