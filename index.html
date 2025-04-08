@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Board Debug</title>
+  <title>Flight Checklist</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -11,11 +11,11 @@
 <body class="dark-mode">
   <header>
     <input type="file" id="csvUpload" accept=".csv" />
+    <button id="themeToggle">Toggle Theme</button>
   </header>
 
   <main>
-    <div id="hour-18" class="zone"><h2>18:00</h2></div>
-    <div id="Holding" class="zone"><h2>Holding</h2></div>
+    <div id="hourlyBlocks"></div>
   </main>
 
   <script src="app.js"></script>
