@@ -60,14 +60,17 @@
           const flights = results.data.filter(f =>
   (f["Carrier"] || "").trim() === "AA" ||
   (f["Arr. Type"] || "").toUpperCase().includes("TERM")
-).map(f => ({
-  flight: (f["Arr. Flt."] || "").trim(),
-  eta: (f["ETA/Actual"] || "").trim(),
-  gate: (f["ETA/Actual Gate"] || "").trim(),
-  tail: (f["Equip."] || "").trim(),          // SWAPPED — Equip has the tail!
-  type: (f["Tail #"] || "").trim(),          // SWAPPED — Tail # has the aircraft type!
-  arrType: (f["Arr. Type"] || "").trim()
-}));
+).map(f => {
+  const values = Object.values(f);
+  return {
+    flight: values[2]?.trim() || "",         // Arr. Flt. (column 3)
+    eta: values[5]?.trim() || "",            // ETA/Actual (column 6)
+    gate: values[6]?.trim() || "",           // ETA/Actual Gate (column 7)
+    tail: values[26]?.trim() || "",          // Tail # (column 27)
+    type: values[27]?.trim() || "",          // Equip. (aircraft type, column 28)
+    arrType: values[11]?.trim() || ""        // Arr. Type (column 12)
+  };
+})
 
           const container = document.getElementById("output");
           container.innerHTML = "";
