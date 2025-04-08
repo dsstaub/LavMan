@@ -58,16 +58,16 @@
         transformHeader: h => h.trim(),
         complete: function (results) {
           const flights = results.data.filter(f =>
-            (f["Carrier"] || "").trim() === "AA" ||
-            (f["Arr. Type"] || "").toUpperCase().includes("TERM")
-          ).map(f => ({
-            flight: (f["Arr. Flt."] || "").trim(),
-            eta: (f["ETA/Actual"] || "").trim(),
-            gate: (f["ETA/Actual Gate"] || "").trim(),
-            tail: (f["Tail #"] || "").trim(),
-            type: (f["Equip."] || "").trim(),
-            arrType: (f["Arr. Type"] || "").trim()
-          }));
+  (f["Carrier"] || "").trim() === "AA" ||
+  (f["Arr. Type"] || "").toUpperCase().includes("TERM")
+).map(f => ({
+  flight: (f["Arr. Flt."] || "").trim(),
+  eta: (f["ETA/Actual"] || "").trim(),
+  gate: (f["ETA/Actual Gate"] || "").trim(),
+  tail: (f["Equip."] || "").trim(),          // SWAPPED — Equip has the tail!
+  type: (f["Tail #"] || "").trim(),          // SWAPPED — Tail # has the aircraft type!
+  arrType: (f["Arr. Type"] || "").trim()
+}));
 
           const container = document.getElementById("output");
           container.innerHTML = "";
