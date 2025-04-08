@@ -9,17 +9,18 @@ document.getElementById('csvUpload').addEventListener('change', function(e) {
     Papa.parse(e.target.files[0], {
         header: true,
         skipEmptyLines: true,
+        transformHeader: header => header.trim(),
         complete: (results) => {
             flights = results.data.filter(f => 
-                f['Carrier'] === 'AA' || f['Arr. Type'] === 'Term'
+                f['Carrier']?.trim() === 'AA' || f['Arr. Type']?.trim() === 'Term'
             ).map(f => ({
-                flight: f['Arr. Flt.'] || '',
-                eta: f['ETA/Actual'] || '',
-                gate: f['ETA/Actual Gate'] || '',
-                tail: f['Tail #'] || '',
-                type: f['Equip.'] || '',
-                carrier: f['Carrier'] || '',
-                arrType: f['Arr. Type'] || ''
+                flight: f['Arr. Flt.']?.trim() || '',
+                eta: f['ETA/Actual']?.trim() || '',
+                gate: f['ETA/Actual Gate']?.trim() || '',
+                tail: f[Object.keys(f).find(k => k.trim().toLowerCase() === 'tail #')]?.trim() || '',
+                type: f['Equip.']?.trim() || '',
+                carrier: f['Carrier']?.trim() || '',
+                arrType: f['Arr. Type']?.trim() || ''
             }));
             renderFlights();
         }
