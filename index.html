@@ -108,13 +108,13 @@
           ).map(f => {
             const values = Object.values(f);
             return {
-              flight: values[2]?.trim() || "",
-              eta: values[8]?.trim() || "",
-              gate: values[13]?.trim() || "",
-              tail: values[26]?.trim() || "",
-              type: values[27]?.trim() || "",
-              arrType: values[11]?.trim() || "",
-              carrier: values[1]?.trim() || "" // Column 2 for carrier
+              flight: values[2]?.trim() || "",      // Flight number
+              eta: values[8]?.trim() || "",         // ETA
+              gate: values[13]?.trim() || "",       // Gate
+              tail: values[26]?.trim() || "",       // Tail number
+              type: values[27]?.trim() || "",       // Aircraft type
+              arrType: values[11]?.trim() || "",    // Arr. Type
+              carrier: values[1]?.trim() || ""      // Carrier
             };
           });
 
@@ -123,7 +123,9 @@
           flights.forEach((f, i) => {
             const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
             const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
-            let hour = parseInt(f.eta.split(":"))[0];
+
+            let hourMatch = f.eta.match(/^\\d{1,2}/);
+            let hour = hourMatch ? parseInt(hourMatch[0], 10) : null;
             if (hour === 0) hour = 24;
 
             const card = document.createElement("div");
@@ -134,6 +136,7 @@
               Gate: <input value="${f.gate}" /><br>
               Tail: <input value="${f.tail}" />
             `;
+
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
             target.appendChild(card);
           });
