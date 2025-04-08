@@ -48,17 +48,19 @@ function renderFlights() {
     flights.forEach((f, idx) => {
         const flightTypeLabel = (f.arrType || '').toUpperCase() === 'TERM' ? 'TF' : 'QT';
 
-        // DEBUG: Log to prove values are correct
-        console.log(`Flight ${f.flight}: tail=${f.tail}, type=${f.type}`);
+        // Log to confirm which field is being used
+        console.log(`>> CARD BUILD >> flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}`);
 
         const card = document.createElement('div');
         card.className = `flight-card ${f.carrier === 'AA' ? 'mainline' : 'regional'}`;
         card.setAttribute('draggable', 'true');
         card.dataset.index = idx;
 
-        // CORRECTED: This uses aircraft type (f.type) in parentheses — not tail
+        // Temporary visual debugger: red if it's showing tail instead of type
+        const debugDisplay = `<span style="color: red; font-weight: bold;">(${f.type})</span>`;
+
         card.innerHTML = `
-            <strong>${f.flight}</strong> (${f.type}) [${flightTypeLabel}]<br>
+            <strong>${f.flight}</strong> ${debugDisplay} [${flightTypeLabel}]<br>
             ETA: ${f.eta}<br>
             Gate: <input type="text" value="${f.gate}" onchange="updateFlight(${idx}, 'gate', this.value)"><br>
             Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)">
