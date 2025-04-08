@@ -1,5 +1,5 @@
 let flights = [];
- 
+
 document.getElementById('themeToggle').onclick = () => {
     document.body.classList.toggle('dark-mode');
     document.body.classList.toggle('light-mode');
@@ -14,17 +14,15 @@ document.getElementById('csvUpload').addEventListener('change', function (e) {
             flights = results.data.filter(f =>
                 (f['Carrier'] || '').toString().trim() === 'AA' ||
                 (f['Arr. Type'] || '').toString().toUpperCase().includes('TERM')
-            ).map(f => {
-                return {
-                    flight: f['Arr. Flt.']?.toString().trim() || '',
-                    eta: f['ETA/Actual']?.toString().trim() || '',
-                    gate: f['ETA/Actual Gate']?.toString().trim() || '',
-                    tail: f['Tail #']?.toString().trim() || '',
-                    type: f['Equip.']?.toString().trim() || '',
-                    carrier: f['Carrier']?.toString().trim() || '',
-                    arrType: f['Arr. Type']?.toString().trim() || ''
-                };
-            });
+            ).map(f => ({
+                flight: f['Arr. Flt.']?.toString().trim() || '',
+                eta: f['ETA/Actual']?.toString().trim() || '',
+                gate: f['ETA/Actual Gate']?.toString().trim() || '',
+                tail: f['Tail #']?.toString().trim() || '',
+                type: f['Equip.']?.toString().trim() || '', // <- FIXED RIGHT HERE
+                carrier: f['Carrier']?.toString().trim() || '',
+                arrType: f['Arr. Type']?.toString().trim() || ''
+            }));
             renderFlights();
         }
     });
