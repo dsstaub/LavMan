@@ -111,7 +111,8 @@
               Gate: <input value="${f.gate}" /><br>
               Tail: <input value="${f.tail}" />
             `;
-            const hour = parseInt(f.eta.split(":"))[0];
+            let hour = parseInt(f.eta.split(":")[0]);
+            if (hour === 0) hour = 24;
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
             target.appendChild(card);
           });
