@@ -59,12 +59,15 @@ function renderFlights() {
         // Temporary visual debugger: red if it's showing tail instead of type
         const debugDisplay = `<span style="color: red; font-weight: bold;">(${f.type})</span>`;
 
-        card.innerHTML = `
-            <strong>${f.flight}</strong> ${debugDisplay} [${flightTypeLabel}]<br>
-            ETA: ${f.eta}<br>
-            Gate: <input type="text" value="${f.gate}" onchange="updateFlight(${idx}, 'gate', this.value)"><br>
-            Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)">
-        `;
+card.innerHTML = `
+    <strong>${f.flight}</strong> <span style="color: red;">(TYPE: ${f.type})</span> [${flightTypeLabel}]<br>
+    ETA: ${f.eta}<br>
+    Gate: <input type="text" value="${f.gate}" onchange="updateFlight(${idx}, 'gate', this.value)"><br>
+    Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)"><br>
+    <div style="margin-top: 6px; font-size: 12px; color: yellow;">
+        DEBUG — TAIL: ${f.tail} | TYPE: ${f.type}
+    </div>
+`;
 
         const hourBlockId = getHourBlockIdFromETA(f.eta);
         const dropTarget = document.getElementById(hourBlockId) || document.getElementById('Holding');
