@@ -40,19 +40,21 @@
       display: flex;
       flex-direction: column;
       border-left: 10px solid;
-    }
-    .flight-card input {
-      background: #000;
-      color: #fff;
-      border: 1px solid #444;
-      width: 100%;
-      margin-top: 6px;
-      padding: 6px;
-      font-size: 16px;
+      font-size: 24px;
+      line-height: 1.2em;
     }
     .flight-info {
-      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
       font-weight: bold;
+    }
+    .flight-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .editable {
+      cursor: pointer;
     }
     .mainline {
       background: #3399ff; /* light blue */
@@ -65,6 +67,13 @@
     }
     .qt {
       border-left-color: limegreen;
+    }
+    input.edit-field {
+      background: #000;
+      color: #fff;
+      border: 1px solid #444;
+      font-size: 24px;
+      width: 70px;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -93,6 +102,21 @@
       });
     }
 
+    function makeEditable(el, field, flight) {
+      const input = document.createElement("input");
+      input.value = flight[field];
+      input.className = "edit-field";
+      input.onblur = () => {
+        flight[field] = input.value;
+        el.innerText = input.value;
+        el.style.display = "inline";
+        input.remove();
+      };
+      el.style.display = "none";
+      el.parentNode.insertBefore(input, el);
+      input.focus();
+    }
+
     document.getElementById("csvUpload").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -108,13 +132,13 @@
           ).map(f => {
             const values = Object.values(f);
             return {
-              flight: values[2]?.trim() || "",      // Flight number
-              eta: values[8]?.trim() || "",         // ETA
-              gate: values[13]?.trim() || "",       // Gate
-              tail: values[26]?.trim() || "",       // Tail number
-              type: values[27]?.trim() || "",       // Aircraft type
-              arrType: values[11]?.trim() || "",    // Arr. Type
-              carrier: values[1]?.trim() || ""      // Carrier
+              flight: values[2]?.trim() || "",
+              eta: values[8]?.trim() || "",
+              gate: values[13]?.trim() || "",
+              tail: values[26]?.trim() || "",
+              type: values[27]?.trim() || "",
+              arrType: values[11]?.trim() || "",
+              carrier: values[1]?.trim() || ""
             };
           });
 
@@ -130,12 +154,33 @@
 
             const card = document.createElement("div");
             card.className = `flight-card ${labelClass} ${carrierClass}`;
+
+            const gateSpan = document.createElement("span");
+            gateSpan.innerText = f.gate;
+            gateSpan.className = "editable";
+            gateSpan.onclick = () => makeEditable(gateSpan, 'gate', f);
+
+            const tailSpan = document.createElement("span");
+            tailSpan.innerText = f.tail;
+            tailSpan.className = "editable";
+            tailSpan.onclick = () => makeEditable(tailSpan, 'tail', f);
+
             card.innerHTML = `
-              <div class="flight-info">${f.flight} (${f.type})</div>
-              ETA: ${f.eta}<br>
-              Gate: <input value="${f.gate}" /><br>
-              Tail: <input value="${f.tail}" />
+              <div class="flight-info">
+                <span>${f.flight} (${f.type})</span>
+              </div>
+              <div class="flight-meta">
+                <span>ETA: ${f.eta}</span>
+              </div>
             `;
+
+            const meta = card.querySelector(".flight-meta");
+            const editBox = document.createElement("div");
+            editBox.style.display = "flex";
+            editBox.style.gap = "10px";
+            editBox.appendChild(gateSpan);
+            editBox.appendChild(tailSpan);
+            meta.appendChild(editBox);
 
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
             target.appendChild(card);
