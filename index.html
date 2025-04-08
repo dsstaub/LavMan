@@ -3,46 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Checklist</title>
+  <title>Flight Debug Board</title>
   <style>
     body {
-      margin: 0;
-      font-family: sans-serif;
       background: #111;
       color: #fff;
+      font-family: sans-serif;
+      margin: 0;
     }
     header {
       background: #222;
       padding: 10px;
-      display: flex;
-      justify-content: space-between;
-    }
-    #hourlyBlocks {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 12px;
-      padding: 12px;
     }
     .hour-block {
-      border: 1px solid #333;
-      border-radius: 8px;
       padding: 10px;
-      background: #1a1a1a;
+      border-bottom: 1px solid #333;
     }
     .flight-card {
       background: #222;
-      border: 1px solid #444;
-      border-radius: 6px;
+      border: 1px solid #555;
+      border-radius: 8px;
       padding: 10px;
-      margin-bottom: 8px;
+      margin-top: 8px;
     }
-    input[type="text"] {
+    input {
       background: #000;
       color: #fff;
       border: 1px solid #444;
-      padding: 2px 4px;
-      margin-top: 4px;
       width: 100%;
+      margin-top: 4px;
+    }
+    .debug {
+      color: yellow;
+      font-size: 12px;
+      margin-top: 6px;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -51,78 +45,49 @@
   <header>
     <input type="file" id="csvUpload" accept=".csv" />
   </header>
-
-  <main>
-    <div id="statusMessage">Waiting for CSV upload...</div>
-    <div id="hourlyBlocks" style="display: none;"></div>
-  </main>
+  <div id="output"></div>
 
   <script>
-    const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 1];
-    const blockContainer = document.getElementById("hourlyBlocks");
-    const statusMessage = document.getElementById("statusMessage");
-    let flights = [];
-
     document.getElementById("csvUpload").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
-      statusMessage.textContent = "Parsing file...";
 
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
         transformHeader: h => h.trim(),
-        complete: (results) => {
-          flights = results.data.filter(f =>
-            (f['Carrier'] || '').trim() === 'AA' ||
-            (f['Arr. Type'] || '').toUpperCase().includes('TERM')
+        complete: function (results) {
+          const flights = results.data.filter(f =>
+            (f["Carrier"] || "").trim() === "AA" ||
+            (f["Arr. Type"] || "").toUpperCase().includes("TERM")
           ).map(f => ({
-            flight: (f['Arr. Flt.'] || '').trim(),
-            eta: (f['ETA/Actual'] || '').trim(),
-            gate: (f['ETA/Actual Gate'] || '').trim(),
-            tail: (f['Tail #'] || '').trim(),
-            type: (f['Equip.'] || '').trim(),
-            arrType: (f['Arr. Type'] || '').trim()
+            flight: (f["Arr. Flt."] || "").trim(),
+            eta: (f["ETA/Actual"] || "").trim(),
+            gate: (f["ETA/Actual Gate"] || "").trim(),
+            tail: (f["Tail #"] || "").trim(),
+            type: (f["Equip."] || "").trim(),
+            arrType: (f["Arr. Type"] || "").trim()
           }));
-          renderFlights();
+
+          const container = document.getElementById("output");
+          container.innerHTML = "";
+
+          flights.forEach((f, i) => {
+            const label = f.arrType.toUpperCase() === "TERM" ? "TF" : "QT";
+            const card = document.createElement("div");
+            card.className = "flight-card";
+            card.innerHTML = `
+              <strong>${f.flight}</strong> (${f.type}) [${label}]<br>
+              ETA: ${f.eta}<br>
+              Gate: <input value="${f.gate}" /><br>
+              Tail: <input value="${f.tail}" />
+              <div class="debug">DEBUG — flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}</div>
+            `;
+            container.appendChild(card);
+          });
         }
       });
     });
-
-    function renderFlights() {
-      statusMessage.style.display = "none";
-      blockContainer.style.display = "grid";
-      blockContainer.innerHTML = "";
-
-      hours.forEach(hour => {
-        const block = document.createElement("div");
-        block.id = `hour-${hour}`;
-        block.className = "hour-block";
-        block.innerHTML = `<h2>${hour}:00</h2>`;
-        blockContainer.appendChild(block);
-      });
-
-      if (flights.length === 0) {
-        statusMessage.textContent = "No matching flights found.";
-        statusMessage.style.display = "block";
-        return;
-      }
-
-      flights.forEach((f, i) => {
-        const label = f.arrType.toUpperCase() === 'TERM' ? 'TF' : 'QT';
-        const card = document.createElement("div");
-        card.className = "flight-card";
-        card.innerHTML = `
-          <strong>${f.flight}</strong> (${f.type}) [${label}]<br>
-          ETA: ${f.eta}<br>
-          Gate: <input type="text" value="${f.gate}"><br>
-          Tail: <input type="text" value="${f.tail}">
-        `;
-        const hour = parseInt(f.eta.split(':')[0]);
-        const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
-        target.appendChild(card);
-      });
-    }
   </script>
 </body>
 </html>
