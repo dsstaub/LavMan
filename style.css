@@ -1,26 +1,84 @@
 body {
-  font-family: sans-serif;
   margin: 0;
-  padding: 0;
+  font-family: sans-serif;
   background: #111;
   color: #fff;
 }
 
 header {
-  padding: 10px;
   background: #222;
-  text-align: center;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
 }
 
-.zone {
+#hourlyBlocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+
+.hour-block {
+  border: 1px solid #333;
+  border-radius: 8px;
   padding: 10px;
-  border-top: 1px solid #333;
+  background: #1a1a1a;
+}
+
+.hour-block h2 {
+  margin-top: 0;
+  color: #ddd;
+  font-size: 18px;
 }
 
 .flight-card {
-  border: 1px solid #555;
-  padding: 10px;
-  margin: 10px 0;
   background: #222;
-  border-radius: 8px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+input[type="text"] {
+  background: #000;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 2px 4px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+button {
+  background: #333;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #444;
+}
+
+.dark-mode {
+  background: #111;
+  color: #fff;
+}
+
+.light-mode {
+  background: #fff;
+  color: #000;
+}
+
+.light-mode .flight-card {
+  background: #f9f9f9;
+  color: #000;
+  border-color: #ccc;
+}
+
+.light-mode .hour-block {
+  background: #f2f2f2;
+  border-color: #ccc;
 }
