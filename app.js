@@ -14,22 +14,23 @@ document.getElementById('csvUpload').addEventListener('change', function (e) {
             flights = results.data.filter(f =>
                 (f['Carrier'] || '').toString().trim() === 'AA' ||
                 (f['Arr. Type'] || '').toString().toUpperCase().includes('TERM')
-            ).map(f => ({
-                flight: f['Arr. Flt.']?.trim() || '',
-                eta: f['ETA/Actual']?.trim() || '',
-                gate: f['ETA/Actual Gate']?.trim() || '',
-                tail: f['Tail #']?.trim() || '',
-                type: f['Equip.']?.trim() || '',
-                carrier: f['Carrier']?.trim() || '',
-                arrType: f['Arr. Type']?.trim() || ''
-            }));
+            ).map(f => {
+                return {
+                    flight: f['Arr. Flt.']?.toString().trim() || '',
+                    eta: f['ETA/Actual']?.toString().trim() || '',
+                    gate: f['ETA/Actual Gate']?.toString().trim() || '',
+                    tail: f['Tail #']?.toString().trim() || '',
+                    type: f['Equip.']?.toString().trim() || '',
+                    carrier: f['Carrier']?.toString().trim() || '',
+                    arrType: f['Arr. Type']?.toString().trim() || ''
+                };
+            });
             renderFlights();
         }
     });
 });
 
 function renderFlights() {
-    // Clear all drop zones
     const zones = [
         'Pending', 'CXL', 'Delayed', 'Holding', 'Serviced',
         'hour-15','hour-16','hour-17','hour-18','hour-19',
