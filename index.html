@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Checklist Board</title>
+  <title>Flight Board Debug</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -11,33 +11,11 @@
 <body class="dark-mode">
   <header>
     <input type="file" id="csvUpload" accept=".csv" />
-    <button id="themeToggle">Toggle Theme</button>
   </header>
 
   <main>
-    <section id="statusContainer">
-      <h2>Status Zones</h2>
-      <div id="Pending" class="status-zone"><h3>Pending</h3></div>
-      <div id="CXL" class="status-zone"><h3>CXL</h3></div>
-      <div id="Delayed" class="status-zone"><h3>Delayed</h3></div>
-      <div id="Holding" class="status-zone"><h3>Holding</h3></div>
-      <div id="Serviced" class="status-zone"><h3>Serviced</h3></div>
-    </section>
-
-    <section id="hoursContainer">
-      <h2>Hourly Blocks</h2>
-      <div id="hour-15" class="hour-block"><h3>15:00</h3></div>
-      <div id="hour-16" class="hour-block"><h3>16:00</h3></div>
-      <div id="hour-17" class="hour-block"><h3>17:00</h3></div>
-      <div id="hour-18" class="hour-block"><h3>18:00</h3></div>
-      <div id="hour-19" class="hour-block"><h3>19:00</h3></div>
-      <div id="hour-20" class="hour-block"><h3>20:00</h3></div>
-      <div id="hour-21" class="hour-block"><h3>21:00</h3></div>
-      <div id="hour-22" class="hour-block"><h3>22:00</h3></div>
-      <div id="hour-23" class="hour-block"><h3>23:00</h3></div>
-      <div id="hour-24" class="hour-block"><h3>00:00</h3></div>
-      <div id="hour-01" class="hour-block"><h3>01:00</h3></div>
-    </section>
+    <div id="hour-18" class="zone"><h2>18:00</h2></div>
+    <div id="Holding" class="zone"><h2>Holding</h2></div>
   </main>
 
   <script src="app.js"></script>
