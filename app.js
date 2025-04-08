@@ -17,7 +17,7 @@ document.getElementById('csvUpload').addEventListener('change', function(e) {
                 flight: f['Arr. Flt.']?.trim() || '',
                 eta: f['ETA/Actual']?.trim() || '',
                 gate: f['ETA/Actual Gate']?.trim() || '',
-                tail: f[Object.keys(f).find(k => k.trim().toLowerCase() === 'tail #')]?.trim() || '',
+                tail: f['Tail #']?.trim() || '',
                 type: f['Equip.']?.trim() || '',
                 carrier: f['Carrier']?.trim() || '',
                 arrType: f['Arr. Type']?.trim() || ''
