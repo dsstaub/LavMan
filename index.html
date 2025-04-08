@@ -63,6 +63,9 @@
     }
     .editable {
       cursor: pointer;
+      min-width: 50px;
+      display: inline-block;
+      color: #ddd;
     }
     .mainline {
       background: #3399ff; /* light blue */
@@ -130,8 +133,8 @@
       input.className = "edit-field";
       input.onblur = () => {
         flight[field] = input.value;
-        el.innerText = input.value;
-        el.style.display = "inline";
+        el.innerText = input.value || '[ ]';
+        el.style.display = "inline-block";
         input.remove();
       };
       el.style.display = "none";
@@ -198,12 +201,12 @@
             card.className = `flight-card ${labelClass} ${carrierClass}`;
 
             const gateSpan = document.createElement("span");
-            gateSpan.innerText = f.gate;
+            gateSpan.innerText = f.gate || '[ ]';
             gateSpan.className = "editable";
             gateSpan.onclick = () => makeEditable(gateSpan, 'gate', f);
 
             const tailSpan = document.createElement("span");
-            tailSpan.innerText = f.tail;
+            tailSpan.innerText = f.tail || '[ ]';
             tailSpan.className = "editable";
             tailSpan.onclick = () => makeEditable(tailSpan, 'tail', f);
 
