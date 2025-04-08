@@ -124,7 +124,7 @@
             const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
             const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
 
-            let hourMatch = f.eta.match(/^\\d{1,2}/);
+            let hourMatch = f.eta.match(/^\d{1,2}/);
             let hour = hourMatch ? parseInt(hourMatch[0], 10) : null;
             if (hour === 0) hour = 24;
 
