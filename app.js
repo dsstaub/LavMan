@@ -5,13 +5,13 @@ document.getElementById('themeToggle').onclick = () => {
     document.body.classList.toggle('light-mode');
 };
 
-document.getElementById('csvUpload').addEventListener('change', function(e) {
+document.getElementById('csvUpload').addEventListener('change', function (e) {
     Papa.parse(e.target.files[0], {
         header: true,
         skipEmptyLines: true,
         transformHeader: header => header.trim(),
         complete: (results) => {
-            flights = results.data.filter(f => 
+            flights = results.data.filter(f =>
                 f['Carrier']?.trim() === 'AA' || f['Arr. Type']?.trim() === 'Term'
             ).map(f => ({
                 flight: f['Arr. Flt.']?.trim() || '',
@@ -28,8 +28,16 @@ document.getElementById('csvUpload').addEventListener('change', function(e) {
 });
 
 function renderFlights() {
-    const pending = document.getElementById('Pending');
-    pending.innerHTML = '';
+    // Clear all drop zones
+    const zones = [
+        'Pending', 'CXL', 'Delayed', 'Holding', 'Serviced',
+        'hour-15','hour-16','hour-17','hour-18','hour-19',
+        'hour-20','hour-21','hour-22','hour-23','hour-24','hour-01'
+    ];
+    zones.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
 
     flights.forEach((f, idx) => {
         const flightTypeLabel = f.arrType === 'Term' ? 'TF' : 'QT';
@@ -46,10 +54,22 @@ function renderFlights() {
             Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)">
         `;
 
-        pending.appendChild(card);
+        // Try to place in the appropriate hour bucket
+        const hourBlockId = getHourBlockIdFromETA(f.eta);
+        const dropTarget = document.getElementById(hourBlockId) || document.getElementById('Holding');
+        dropTarget.appendChild(card);
     });
 
     makeSortable();
+}
+
+function getHourBlockIdFromETA(eta) {
+    if (!eta) return null;
+    const hour = parseInt(eta.split(':')[0], 10);
+    if (isNaN(hour)) return null;
+    if (hour >= 15 && hour <= 24) return `hour-${hour}`;
+    if (hour === 0 || hour === 1) return 'hour-01';
+    return null;
 }
 
 function updateFlight(index, field, value) {
