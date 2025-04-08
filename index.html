@@ -15,16 +15,12 @@
       background: #222;
       padding: 10px;
     }
-    .hour-block {
-      padding: 10px;
-      border-bottom: 1px solid #333;
-    }
     .flight-card {
       background: #222;
       border: 1px solid #555;
       border-radius: 8px;
       padding: 10px;
-      margin-top: 8px;
+      margin: 10px;
     }
     input {
       background: #000;
@@ -32,6 +28,7 @@
       border: 1px solid #444;
       width: 100%;
       margin-top: 4px;
+      padding: 4px;
     }
     .debug {
       color: yellow;
@@ -58,19 +55,19 @@
         transformHeader: h => h.trim(),
         complete: function (results) {
           const flights = results.data.filter(f =>
-  (f["Carrier"] || "").trim() === "AA" ||
-  (f["Arr. Type"] || "").toUpperCase().includes("TERM")
-).map(f => {
-  const values = Object.values(f);
-  return {
-    flight: values[2]?.trim() || "",     // Flight number (column 3)
-    eta: values[8]?.trim() || "",        // ETA (column 9)
-    gate: values[13]?.trim() || "",      // Gate (column 14)
-    tail: values[26]?.trim() || "",      // Tail # (column 27)
-    type: values[27]?.trim() || "",      // Aircraft type (column 28)
-    arrType: values[11]?.trim() || ""    // Arr. Type (column 12)
-  };
-})
+            (f["Carrier"] || "").trim() === "AA" ||
+            (f["Arr. Type"] || "").toUpperCase().includes("TERM")
+          ).map(f => {
+            const values = Object.values(f);
+            return {
+              flight: values[2]?.trim() || "",     // Flight number (column 3)
+              eta: values[8]?.trim() || "",        // ETA (column 9)
+              gate: values[13]?.trim() || "",      // Gate (column 14)
+              tail: values[26]?.trim() || "",      // Tail number (column 27)
+              type: values[27]?.trim() || "",      // Aircraft type (column 28)
+              arrType: values[11]?.trim() || ""    // Arrival type (column 12)
+            };
+          });
 
           const container = document.getElementById("output");
           container.innerHTML = "";
@@ -84,7 +81,7 @@
               ETA: ${f.eta}<br>
               Gate: <input value="${f.gate}" /><br>
               Tail: <input value="${f.tail}" />
-              <div class="debug">DEBUG — flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}</div>
+              <div class="debug">DEBUG — flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}, arrType: ${f.arrType}</div>
             `;
             container.appendChild(card);
           });
