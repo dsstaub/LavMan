@@ -16,21 +16,25 @@
       padding: 10px;
     }
     .hour-block {
-      background: #1a1a1a;
+      display: flex;
+      align-items: flex-start;
       border-bottom: 1px solid #333;
       padding: 10px;
     }
-    .hour-block h2 {
-      margin: 0 0 8px 0;
-      font-size: 22px;
+    .hour-label {
+      width: 60px;
+      font-size: 48px;
+      font-weight: bold;
       color: #ccc;
-      pointer-events: none;
+      text-align: center;
+      flex-shrink: 0;
       user-select: none;
     }
     .sortable-wrapper {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      flex: 1;
     }
     .flight-card {
       width: 280px;
@@ -95,14 +99,15 @@
         const block = document.createElement("div");
         block.className = "hour-block";
 
-        const title = document.createElement("h2");
-        title.textContent = `${hour}:00`;
+        const label = document.createElement("div");
+        label.className = "hour-label";
+        label.textContent = hour;
 
         const dropZone = document.createElement("div");
         dropZone.id = `hour-${hour}`;
         dropZone.className = "sortable-wrapper";
 
-        block.appendChild(title);
+        block.appendChild(label);
         block.appendChild(dropZone);
         grid.appendChild(block);
 
