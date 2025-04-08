@@ -12,7 +12,8 @@ document.getElementById('csvUpload').addEventListener('change', function (e) {
         transformHeader: header => header.trim(),
         complete: (results) => {
             flights = results.data.filter(f =>
-                f['Carrier']?.trim() === 'AA' || f['Arr. Type']?.trim() === 'Term'
+                f['Carrier']?.trim() === 'AA' ||
+                f['Arr. Type']?.trim().toLowerCase() === 'term'
             ).map(f => ({
                 flight: f['Arr. Flt.']?.trim() || '',
                 eta: f['ETA/Actual']?.trim() || '',
@@ -40,7 +41,7 @@ function renderFlights() {
     });
 
     flights.forEach((f, idx) => {
-        const flightTypeLabel = f.arrType === 'Term' ? 'TF' : 'QT';
+        const flightTypeLabel = f.arrType.toLowerCase() === 'term' ? 'TF' : 'QT';
 
         const card = document.createElement('div');
         card.className = `flight-card ${f.carrier === 'AA' ? 'mainline' : 'regional'}`;
@@ -54,7 +55,7 @@ function renderFlights() {
             Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)">
         `;
 
-        // Try to place in the appropriate hour bucket
+        // Drop into correct hour block based on ETA
         const hourBlockId = getHourBlockIdFromETA(f.eta);
         const dropTarget = document.getElementById(hourBlockId) || document.getElementById('Holding');
         dropTarget.appendChild(card);
@@ -64,7 +65,7 @@ function renderFlights() {
 }
 
 function getHourBlockIdFromETA(eta) {
-    if (!eta) return null;
+    if (!eta || !eta.includes(':')) return null;
     const hour = parseInt(eta.split(':')[0], 10);
     if (isNaN(hour)) return null;
     if (hour >= 15 && hour <= 24) return `hour-${hour}`;
