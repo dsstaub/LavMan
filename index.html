@@ -140,25 +140,23 @@
     }
 
     function attachLongPress(card) {
-      let pressTimer;
+      let pressTimer, wasDragging = false;
 
       const start = () => {
+        wasDragging = false;
         pressTimer = setTimeout(() => {
-          card.classList.toggle("dimmed");
-        }, 400);
+          if (!wasDragging) card.classList.toggle("dimmed");
+        }, 500);
       };
 
       const cancel = () => {
         clearTimeout(pressTimer);
       };
 
-      card.addEventListener("touchstart", start);
-      card.addEventListener("mousedown", start);
-      card.addEventListener("touchend", cancel);
-      card.addEventListener("mouseup", cancel);
-      card.addEventListener("mouseleave", cancel);
-      card.addEventListener("touchmove", cancel);
-      card.addEventListener("mousemove", cancel);
+      card.addEventListener("pointerdown", start);
+      card.addEventListener("pointerup", cancel);
+      card.addEventListener("pointerleave", cancel);
+      card.addEventListener("pointermove", () => { wasDragging = true; });
     }
 
     document.getElementById("csvUpload").addEventListener("change", function (e) {
