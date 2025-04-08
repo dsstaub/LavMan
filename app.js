@@ -13,7 +13,7 @@ document.getElementById('csvUpload').addEventListener('change', function (e) {
         complete: (results) => {
             flights = results.data.filter(f =>
                 f['Carrier']?.trim() === 'AA' ||
-                f['Arr. Type']?.trim().toLowerCase() === 'term'
+                (f['Arr. Type'] || '').toString().toLowerCase().includes('term')
             ).map(f => ({
                 flight: f['Arr. Flt.']?.trim() || '',
                 eta: f['ETA/Actual']?.trim() || '',
@@ -41,7 +41,7 @@ function renderFlights() {
     });
 
     flights.forEach((f, idx) => {
-        const flightTypeLabel = f.arrType.toLowerCase() === 'term' ? 'TF' : 'QT';
+        const flightTypeLabel = (f.arrType || '').toLowerCase() === 'term' ? 'TF' : 'QT';
 
         const card = document.createElement('div');
         card.className = `flight-card ${f.carrier === 'AA' ? 'mainline' : 'regional'}`;
