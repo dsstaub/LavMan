@@ -31,21 +31,40 @@
       margin-top: 0;
       font-size: 18px;
       color: #ccc;
+      text-align: center;
     }
     .flight-card {
-      background: #222;
-      border: 1px solid #555;
       border-radius: 8px;
-      padding: 10px;
-      margin-top: 8px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      border-left: 10px solid;
     }
-    input {
+    .flight-card input {
       background: #000;
       color: #fff;
       border: 1px solid #444;
       width: 100%;
-      margin-top: 4px;
-      padding: 4px;
+      margin-top: 6px;
+      padding: 6px;
+      font-size: 16px;
+    }
+    .flight-info {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .mainline {
+      background: #3399ff; /* light blue */
+    }
+    .regional {
+      background: #ff6666; /* light red */
+    }
+    .tf {
+      border-left-color: red;
+    }
+    .qt {
+      border-left-color: limegreen;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -60,7 +79,6 @@
   <script>
     const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 1];
     const grid = document.getElementById("hourGrid");
-
     let flights = [];
 
     function createHourBlocks() {
@@ -95,24 +113,27 @@
               gate: values[13]?.trim() || "",
               tail: values[26]?.trim() || "",
               type: values[27]?.trim() || "",
-              arrType: values[11]?.trim() || ""
+              arrType: values[11]?.trim() || "",
+              carrier: values[0]?.trim() || ""
             };
           });
 
           createHourBlocks();
 
           flights.forEach((f, i) => {
-            const label = f.arrType.toUpperCase() === "TERM" ? "TF" : "QT";
+            const labelClass = f.arrType.toUpperCase() === "TERM" ? "tf" : "qt";
+            const carrierClass = f.carrier === "AA" ? "mainline" : "regional";
+            let hour = parseInt(f.eta.split(":"))[0];
+            if (hour === 0) hour = 24;
+
             const card = document.createElement("div");
-            card.className = "flight-card";
+            card.className = `flight-card ${labelClass} ${carrierClass}`;
             card.innerHTML = `
-              <strong>${f.flight}</strong> (${f.type}) [${label}]<br>
+              <div class="flight-info">${f.flight} (${f.type})</div>
               ETA: ${f.eta}<br>
               Gate: <input value="${f.gate}" /><br>
               Tail: <input value="${f.tail}" />
             `;
-            let hour = parseInt(f.eta.split(":")[0]);
-            if (hour === 0) hour = 24;
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
             target.appendChild(card);
           });
