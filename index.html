@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Debug Board</title>
+  <title>Flight Checklist Board</title>
   <style>
     body {
       background: #111;
@@ -15,12 +15,29 @@
       background: #222;
       padding: 10px;
     }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 12px;
+    }
+    .hour-block {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .hour-block h2 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #ccc;
+    }
     .flight-card {
       background: #222;
       border: 1px solid #555;
       border-radius: 8px;
       padding: 10px;
-      margin: 10px;
+      margin-top: 8px;
     }
     input {
       background: #000;
@@ -37,14 +54,32 @@
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 </head>
 <body>
   <header>
     <input type="file" id="csvUpload" accept=".csv" />
   </header>
-  <div id="output"></div>
+  <div class="grid" id="hourGrid"></div>
 
   <script>
+    const hours = [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 1];
+    const grid = document.getElementById("hourGrid");
+
+    let flights = [];
+
+    function createHourBlocks() {
+      grid.innerHTML = "";
+      hours.forEach(hour => {
+        const block = document.createElement("div");
+        block.id = `hour-${hour}`;
+        block.className = "hour-block";
+        block.innerHTML = `<h2>${hour}:00</h2>`;
+        grid.appendChild(block);
+        new Sortable(block, { group: 'shared', animation: 150 });
+      });
+    }
+
     document.getElementById("csvUpload").addEventListener("change", function (e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -54,23 +89,22 @@
         skipEmptyLines: true,
         transformHeader: h => h.trim(),
         complete: function (results) {
-          const flights = results.data.filter(f =>
+          flights = results.data.filter(f =>
             (f["Carrier"] || "").trim() === "AA" ||
             (f["Arr. Type"] || "").toUpperCase().includes("TERM")
           ).map(f => {
             const values = Object.values(f);
             return {
-              flight: values[2]?.trim() || "",     // Flight number (column 3)
-              eta: values[8]?.trim() || "",        // ETA (column 9)
-              gate: values[13]?.trim() || "",      // Gate (column 14)
-              tail: values[26]?.trim() || "",      // Tail number (column 27)
-              type: values[27]?.trim() || "",      // Aircraft type (column 28)
-              arrType: values[11]?.trim() || ""    // Arrival type (column 12)
+              flight: values[2]?.trim() || "",
+              eta: values[8]?.trim() || "",
+              gate: values[13]?.trim() || "",
+              tail: values[26]?.trim() || "",
+              type: values[27]?.trim() || "",
+              arrType: values[11]?.trim() || ""
             };
           });
 
-          const container = document.getElementById("output");
-          container.innerHTML = "";
+          createHourBlocks();
 
           flights.forEach((f, i) => {
             const label = f.arrType.toUpperCase() === "TERM" ? "TF" : "QT";
@@ -83,7 +117,9 @@
               Tail: <input value="${f.tail}" />
               <div class="debug">DEBUG — flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}, arrType: ${f.arrType}</div>
             `;
-            container.appendChild(card);
+            const hour = parseInt(f.eta.split(":"))[0];
+            const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
+            target.appendChild(card);
           });
         }
       });
