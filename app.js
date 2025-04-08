@@ -35,26 +35,39 @@ document.getElementById('csvUpload').addEventListener('change', function (e) {
 });
 
 function renderFlights() {
-  const zone = document.getElementById('hour-18');
-  const fallback = document.getElementById('Holding');
+    const zones = [
+        'Pending', 'CXL', 'Delayed', 'Holding', 'Serviced',
+        'hour-15','hour-16','hour-17','hour-18','hour-19',
+        'hour-20','hour-21','hour-22','hour-23','hour-24','hour-01'
+    ];
+    zones.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
 
-  flights.forEach((f, idx) => {
-    const flightTypeLabel = (f.arrType || '').toUpperCase() === 'TERM' ? 'TF' : 'QT';
+    flights.forEach((f, idx) => {
+        const flightTypeLabel = (f.arrType || '').toUpperCase() === 'TERM' ? 'TF' : 'QT';
 
-    const card = document.createElement('div');
-    card.className = `flight-card`;
-    card.innerHTML = `
-      <strong>${f.flight}</strong> (${f.type}) [${flightTypeLabel}]<br>
-      ETA: ${f.eta}<br>
-      Gate: <input type="text" value="${f.gate}"><br>
-      Tail: <input type="text" value="${f.tail}">
-    `;
+        // DEBUG: Log to prove values are correct
+        console.log(`Flight ${f.flight}: tail=${f.tail}, type=${f.type}`);
 
-    const hour = f.eta.split(':')[0];
-    if (hour === '18') {
-      zone.appendChild(card);
-    } else {
-      fallback.appendChild(card);
-    }
-  });
+        const card = document.createElement('div');
+        card.className = `flight-card ${f.carrier === 'AA' ? 'mainline' : 'regional'}`;
+        card.setAttribute('draggable', 'true');
+        card.dataset.index = idx;
+
+        // CORRECTED: This uses aircraft type (f.type) in parentheses — not tail
+        card.innerHTML = `
+            <strong>${f.flight}</strong> (${f.type}) [${flightTypeLabel}]<br>
+            ETA: ${f.eta}<br>
+            Gate: <input type="text" value="${f.gate}" onchange="updateFlight(${idx}, 'gate', this.value)"><br>
+            Tail: <input type="text" value="${f.tail}" onchange="updateFlight(${idx}, 'tail', this.value)">
+        `;
+
+        const hourBlockId = getHourBlockIdFromETA(f.eta);
+        const dropTarget = document.getElementById(hourBlockId) || document.getElementById('Holding');
+        dropTarget.appendChild(card);
+    });
+
+    makeSortable();
 }
