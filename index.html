@@ -47,11 +47,6 @@
       margin-top: 4px;
       padding: 4px;
     }
-    .debug {
-      color: yellow;
-      font-size: 12px;
-      margin-top: 6px;
-    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
@@ -115,7 +110,6 @@
               ETA: ${f.eta}<br>
               Gate: <input value="${f.gate}" /><br>
               Tail: <input value="${f.tail}" />
-              <div class="debug">DEBUG — flight: ${f.flight}, tail: ${f.tail}, type: ${f.type}, arrType: ${f.arrType}</div>
             `;
             const hour = parseInt(f.eta.split(":"))[0];
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
