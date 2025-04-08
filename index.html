@@ -139,18 +139,26 @@
       input.focus();
     }
 
-    function attachDoubleTap(card) {
-      let lastTap = 0;
-      card.addEventListener("touchend", e => {
-        const now = new Date().getTime();
-        if (now - lastTap < 300) {
+    function attachLongPress(card) {
+      let pressTimer;
+
+      const start = () => {
+        pressTimer = setTimeout(() => {
           card.classList.toggle("dimmed");
-        }
-        lastTap = now;
-      });
-      card.addEventListener("dblclick", () => {
-        card.classList.toggle("dimmed");
-      });
+        }, 400);
+      };
+
+      const cancel = () => {
+        clearTimeout(pressTimer);
+      };
+
+      card.addEventListener("touchstart", start);
+      card.addEventListener("mousedown", start);
+      card.addEventListener("touchend", cancel);
+      card.addEventListener("mouseup", cancel);
+      card.addEventListener("mouseleave", cancel);
+      card.addEventListener("touchmove", cancel);
+      card.addEventListener("mousemove", cancel);
     }
 
     document.getElementById("csvUpload").addEventListener("change", function (e) {
@@ -220,7 +228,7 @@
             editBox.appendChild(tailSpan);
             meta.appendChild(editBox);
 
-            attachDoubleTap(card);
+            attachLongPress(card);
 
             const target = document.getElementById(`hour-${hour}`) || document.getElementById("hour-15");
             target.appendChild(card);
